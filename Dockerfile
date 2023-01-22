@@ -7,7 +7,11 @@ WORKDIR /cosmosdb-with-fastapi
 COPY . .
 
 # 
-RUN pip install --no-cache-dir --upgrade -r /cosmosdb-with-fastapi/requirements.txt
+RUN pip install fastapi
+RUN pip install fastapi uvicorn
+RUN pip install python-dotenv
+RUN pip install aiohttp
+RUN pip install azure-cosmos
 
 # 
 COPY . .
