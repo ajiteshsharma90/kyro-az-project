@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Build image
+      run: |
+        docker build -t kyro_image
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - name: Deploy to Azure Container Instances
+      uses: azure/container-instances-action@v1
+      with:
+        azure-subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        azure-region: East us
+        azure-resource-group: kyro-RG
+        azure-container-group-name: container-kyro
+        azure-container-image: kyro_image
+        azure-container-port: 8000
+        azure-container-cpu: 1
+        azure-container-memory: 1
+      env:
+        COSMOS_DB_NAME: cosmosdb-kyro
+        COSMOS_DB_KEY: ${{ secrets.COSMOS_DB_KEY }}
+        COSMOS_DB_URI: https://cosmosdb-kyro.documents.azure.com:443/
